@@ -10,7 +10,6 @@
       --danger: #ff3b30;
       --text: #fff;
       --card-bg: rgba(0, 0, 0, 0.6);
-      --blur: 10px;
     }
 
     body {
@@ -19,8 +18,6 @@
       background: url("background.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
-      backdrop-filter: blur(var(--blur));
-      -webkit-backdrop-filter: blur(var(--blur));
     }
 
     .container {
@@ -30,7 +27,6 @@
       border-radius: 1.5rem;
       padding: 2rem;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(var(--blur));
     }
 
     h1 {
@@ -54,13 +50,22 @@
       font-weight: 500;
     }
 
-    input[type="number"] {
+    input[type="number"],
+    textarea {
       padding: 0.75rem 1rem;
       font-size: 1rem;
       border: none;
       border-radius: 1rem;
+    }
+
+    input[type="number"] {
       width: 80px;
       margin-left: 0.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      resize: vertical;
     }
 
     button {
@@ -127,6 +132,15 @@
     <div class="center">
       <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
     </div>
+
+    <div class="section-title">Gemeinsame Notizen</div>
+    <div class="controls">
+      <textarea id="notes" rows="6"></textarea>
+    </div>
+    <div class="center">
+      <button onclick="saveNotes()">💾 Speichern</button>
+      <button onclick="loadNotes()">🔄 Aktualisieren</button>
+    </div>
   </div>
 
   <script>
@@ -141,6 +155,25 @@
       total = 0;
       document.getElementById('total').textContent = total;
       document.getElementById('quantity').value = 1;
+    }
+
+    window.onload = loadNotes;
+
+    function saveNotes() {
+      const content = document.getElementById('notes').value;
+      fetch('/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
+      });
+    }
+
+    function loadNotes() {
+      fetch('/notes')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('notes').value = data.content;
+        });
     }
   </script>
 </body>
