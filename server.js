@@ -26,3 +26,31 @@ app.post('/notes', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
 });
+
+
+
+window.onload = () => {
+  loadNotes();
+  setInterval(loadNotes, 3000); // Alle 3 Sekunden aktualisieren
+};
+
+function saveNotes() {
+  const content = document.getElementById('notes').value;
+  fetch('/notes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content })
+  });
+}
+
+function loadNotes() {
+  fetch('/notes')
+    .then(res => res.json())
+    .then(data => {
+      const notesElem = document.getElementById('notes');
+      // Nur aktualisieren, wenn sich der Text unterscheidet, damit der User beim Schreiben nicht gestört wird
+      if (notesElem.value !== data.content) {
+        notesElem.value = data.content;
+      }
+    });
+}
