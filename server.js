@@ -29,28 +29,45 @@ app.listen(PORT, () => {
 
 
 
-window.onload = () => {
-  loadNotes();
-  setInterval(loadNotes, 3000); // Alle 3 Sekunden aktualisieren
+// Firebase konfigurieren
+const firebaseConfig = {
+  apiKey: "API_KEY_HIER",
+  authDomain: "DEIN_PROJEKT.firebaseapp.com",
+  projectId: "DEIN_PROJEKT",
+  storageBucket: "DEIN_PROJEKT.appspot.com",
+  messagingSenderId: "SENDER_ID",
+  appId: "APP_ID",
 };
 
-function saveNotes() {
-  const content = document.getElementById('notes').value;
-  fetch('/notes', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content })
-  });
-}
+// Firebase initialisieren
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
+// Referenz zur Notizen-Collection/Dokument
+const notesDoc = db.collection('notizen').doc('gemeinsam');
+
+// Notizen laden und ins Textfeld schreiben
 function loadNotes() {
-  fetch('/notes')
-    .then(res => res.json())
-    .then(data => {
+  notesDoc.get().then(doc => {
+    if (doc.exists) {
+      const data = doc.data();
       const notesElem = document.getElementById('notes');
-      // Nur aktualisieren, wenn sich der Text unterscheidet, damit der User beim Schreiben nicht gestört wird
       if (notesElem.value !== data.content) {
         notesElem.value = data.content;
       }
-    });
+    }
+  });
 }
+
+// Notizen speichern, wenn sich etwas ändert
+function saveNotes() {
+  const content = document.getElementById('notes').value;
+  notesDoc.set({ content: content });
+}
+
+// Automatisch laden und alle 3 Sekunden aktualisieren
+window.onload = () => {
+  loadNotes();
+  setInterval(loadNotes, 3000);
+};
+
