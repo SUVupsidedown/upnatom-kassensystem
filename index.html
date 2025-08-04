@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+
+  <!-- Firebase App (core) SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<!-- Firebase Firestore SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Up-n-Atom Kasse</title>
@@ -138,8 +145,8 @@
       <textarea id="notes" rows="6"></textarea>
     </div>
     <div class="center">
-      <button onclick="saveNotes()">💾 Speichern</button>
-      <button onclick="loadNotes()">🔄 Aktualisieren</button>
+     <button onclick="saveNotes()">💾 Speichern</button>
+<button onclick="loadNotes()">🔄 Aktualisieren</button>
     </div>
   </div>
 
