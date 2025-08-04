@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Up-n-Atom Kasse</title>
+  <style>
+    :root {
+      --primary: #007aff;
+      --danger: #ff3b30;
+      --text: #fff;
+      --card-bg: rgba(0, 0, 0, 0.6);
+      --blur: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: url("background.png") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      backdrop-filter: blur(var(--blur));
+      -webkit-backdrop-filter: blur(var(--blur));
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 3rem auto;
+      background-color: var(--card-bg);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(var(--blur));
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .controls {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    input[type="number"] {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 1rem;
+      width: 80px;
+      margin-left: 0.5rem;
+    }
+
+    button {
+      padding: 0.75rem 1.2rem;
+      font-size: 1rem;
+      margin: 0.4rem 0.4rem 0 0;
+      border: none;
+      border-radius: 1rem;
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0051c7;
+    }
+
+    .danger {
+      background-color: var(--danger);
+    }
+
+    .danger:hover {
+      background-color: #c12720;
+    }
+
+    .total {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .center {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Up-n-Atom Kasse</h1>
+
+    <div class="controls">
+      <label for="quantity">Menge:</label>
+      <input type="number" id="quantity" value="1" min="1" max="99">
+    </div>
+
+    <div class="section-title">Produkte</div>
+    <button onclick="addToTotal(1200)">🍔 Burger (1200$)</button>
+    <button onclick="addToTotal(1000)">🍟 Beilagen (1000$)</button>
+    <button onclick="addToTotal(1050)">🥤 Getränk (1050$)</button>
+    <button onclick="addToTotal(1100)">🍩 Dessert (1100$)</button>
+
+    <div class="section-title">Lieferpauschalen</div>
+    <button onclick="addToTotal(500)">📦 Roxwood & Paleto Bay (500$)</button>
+    <button onclick="addToTotal(1000)">📦 Grapeseed (1000$)</button>
+    <button onclick="addToTotal(1500)">📦 Sandy Shores & Harmony (1500$)</button>
+    <button onclick="addToTotal(2500)">📦 Los Santos (2500$)</button>
+
+    <div class="total">
+      Gesamt: <span id="total">0</span>$
+    </div>
+
+    <div class="center">
+      <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
+    </div>
+  </div>
+
+  <script>
+    let total = 0;
+    function addToTotal(amount) {
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+      total += amount * quantity;
+      document.getElementById('total').textContent = total;
+    }
+
+    function resetTotal() {
+      total = 0;
+      document.getElementById('total').textContent = total;
+      document.getElementById('quantity').value = 1;
+    }
+  </script>
+</body>
+</html>
