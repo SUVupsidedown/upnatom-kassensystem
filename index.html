@@ -9,37 +9,44 @@
       --primary: #007aff;
       --danger: #ff3b30;
       --text: #fff;
-      --bg: #000;
       --card-bg: rgba(0, 0, 0, 0.6);
     }
 
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
+      background: url("background.png") no-repeat center center fixed;
+      background-size: cover;
       color: var(--text);
-      transition: background 0.3s, color 0.3s;
     }
 
-    body.light {
-      --text: #000;
-      --bg: #fff;
-      --card-bg: rgba(255, 255, 255, 0.8);
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
     }
 
-    .container {
-      max-width: 600px;
-      margin: 3rem auto;
+    .container, .summary {
       background-color: var(--card-bg);
       border-radius: 1.5rem;
       padding: 2rem;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
     }
 
-    h1 {
+    .container {
+      max-width: 600px;
+      flex: 1;
+    }
+
+    .summary {
+      max-width: 300px;
+      flex: 1;
+    }
+
+    h1, h2 {
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
     }
 
     .section-title {
@@ -97,119 +104,110 @@
       margin-top: 2rem;
     }
 
+    .order-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .order-list li {
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 0.3rem;
+    }
+
     .center {
       text-align: center;
     }
 
-    .order-summary {
-      margin-top: 2rem;
-    }
-
-    .order-summary ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .order-summary li {
-      padding: 0.25rem 0;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="theme-toggle">
-    <button onclick="toggleTheme()">🌗 Theme</button>
-  </div>
+  <div class="layout">
+    <!-- Linker Bereich: Kasse -->
+    <div class="container">
+      <h1>Up-N-Atom Kasse</h1>
 
-  <div class="container">
-    <h1>Up-N-Atom Kasse</h1>
+      <div class="controls">
+        <label for="quantity">Menge:</label>
+        <input type="number" id="quantity" value="1" min="1" max="99">
+      </div>
 
-    <div class="controls">
-      <label for="quantity">Menge:</label>
-      <input type="number" id="quantity" value="1" min="1" max="99">
+      <div class="section-title">Produkte</div>
+      <button onclick="addToTotal(1200, 'Burger')">🍔 Burger (1200$)</button>
+      <button onclick="addToTotal(1000, 'Beilagen')">🍟 Beilagen (1000$)</button>
+      <button onclick="addToTotal(1050, 'Getränk')">🥤 Getränk (1050$)</button>
+      <button onclick="addToTotal(1100, 'Dessert')">🍩 Dessert (1100$)</button>
+
+      <div class="section-title">Lieferpauschalen</div>
+      <button onclick="addToTotal(500, 'Roxwood & Paleto Bay')">📦 Roxwood & Paleto Bay (500$)</button>
+      <button onclick="addToTotal(1000, 'Grapeseed')">📦 Grapeseed (1000$)</button>
+      <button onclick="addToTotal(1500, 'Sandy Shores & Harmony')">📦 Sandy Shores & Harmony (1500$)</button>
+      <button onclick="addToTotal(2500, 'Los Santos')">📦 Los Santos (2500$)</button>
+
+      <div class="total">
+        Gesamt: <span id="total">0</span>$
+      </div>
+
+      <div class="center">
+        <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
+      </div>
+
+      <div class="footer">
+        &copy; 2025 Up-n-Atom. Alle Rechte vorbehalten. Von Stark Development  
+        <br><a href="https://discord.gg/pNZYwsNNfR" target="_blank" style="color:lightblue;">Discord</a>
+      </div>
     </div>
 
-    <div class="section-title">Produkte</div>
-    <button onclick="addToTotal('Burger', 1200)">🍔 Burger (1200$)</button>
-    <button onclick="addToTotal('Beilagen', 1000)">🍟 Beilagen (1000$)</button>
-    <button onclick="addToTotal('Getränk', 1050)">🥤 Getränk (1050$)</button>
-    <button onclick="addToTotal('Dessert', 1100)">🍩 Dessert (1100$)</button>
-
-    <div class="section-title">Lieferpauschalen</div>
-    <button onclick="addToTotal('Roxwood & Paleto Bay', 500)">📦 Roxwood & Paleto Bay (500$)</button>
-    <button onclick="addToTotal('Grapeseed', 1000)">📦 Grapeseed (1000$)</button>
-    <button onclick="addToTotal('Sandy Shores & Harmony', 1500)">📦 Sandy Shores & Harmony (1500$)</button>
-    <button onclick="addToTotal('Los Santos', 2500)">📦 Los Santos (2500$)</button>
-
-    <div class="total">
-      Gesamt: <span id="total">0</span>$
-    </div>
-
-    <div class="center">
-      <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
-    </div>
-
-    <div class="order-summary">
-      <h2>Bestellung</h2>
-      <ul id="orderList"></ul>
+    <!-- Rechter Bereich: Bestellübersicht -->
+    <div class="summary">
+      <h2>🧾 Bestellung</h2>
+      <ul id="orderList" class="order-list"></ul>
     </div>
   </div>
 
   <script>
     let total = 0;
-    const order = {};
+    let order = {};
 
-    function addToTotal(product, price) {
+    function addToTotal(amount, name) {
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
-      total += price * quantity;
+      total += amount * quantity;
       document.getElementById('total').textContent = total;
 
-      if (order[product]) {
-        order[product].qty += quantity;
-      } else {
-        order[product] = { qty: quantity, price: price };
+      if (!order[name]) {
+        order[name] = { qty: 0, price: amount };
       }
+      order[name].qty += quantity;
 
       updateOrderList();
     }
 
     function updateOrderList() {
-      const list = document.getElementById('orderList');
-      list.innerHTML = '';
+  const list = document.getElementById('orderList');
+  list.innerHTML = '';
 
-      for (const item in order) {
-        const entry = order[item];
-        const li = document.createElement('li');
-      li.innerHTML = `${entry.qty}× ${item} = ${entry.qty * entry.price}$`;
-          <button onclick="removeItem('\${item}')">❌</button>\`;
-        list.appendChild(li);
-      }
-    }
+  for (const item in order) {
+    const entry = order[item];
+    const lineTotal = entry.qty * entry.price;
+    const li = document.createElement('li');
+    li.textContent = `${entry.qty}× ${item} = ${lineTotal}$`;
+    list.appendChild(li);
+  }
+}
 
-    function removeItem(item) {
-      total -= order[item].qty * order[item].price;
-      delete order[item];
-      document.getElementById('total').textContent = total;
-      updateOrderList();
-    }
 
     function resetTotal() {
       total = 0;
-      for (const key in order) delete order[key];
+      order = {};
       document.getElementById('total').textContent = total;
       document.getElementById('quantity').value = 1;
       updateOrderList();
-    }
-
-    function toggleTheme() {
-      document.body.classList.toggle('light');
     }
   </script>
 </body>
