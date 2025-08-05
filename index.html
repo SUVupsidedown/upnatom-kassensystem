@@ -199,18 +199,20 @@
     let total = 0;
     let order = {};
 
-    function addToTotal(amount, name) {
-      const quantity = parseInt(document.getElementById('quantity').value) || 1;
-      total += amount * quantity;
-      document.getElementById('total').textContent = total;
+   function addToTotal(amount, name) {
+  const quantity = parseInt(document.getElementById('quantity').value) || 1;
+  total += amount * quantity;
+  document.getElementById('total').textContent = total;
 
-      if (!order[name]) {
-        order[name] = { qty: 0, price: amount };
-      }
-      order[name].qty += quantity;
+  if (!order[name]) {
+    order[name] = { qty: 0, price: amount };
+  }
+  order[name].qty += quantity;
 
-      updateOrderList();
-    }
+  saveToStorage();
+  updateOrderList();
+}
+
 
 function updateOrderList() {
   const list = document.getElementById('orderList');
@@ -251,12 +253,13 @@ function removeItem(itemName) {
 
 
     function resetTotal() {
-      total = 0;
-      order = {};
-      document.getElementById('total').textContent = total;
-      document.getElementById('quantity').value = 1;
-      updateOrderList();
-    }
+  total = 0;
+  order = {};
+  document.getElementById('total').textContent = total;
+  document.getElementById('quantity').value = 1;
+  localStorage.removeItem('orderData');
+  updateOrderList();
+}
 
     function updateStats(totalItems) {
   const statsBox = document.getElementById('stats');
@@ -274,6 +277,27 @@ function removeItem(itemName) {
     Durchschnittlicher Preis pro Artikel: ${avgPrice}$
   `;
 }
+
+    function saveToStorage() {
+  const data = {
+    total: total,
+    order: order
+  };
+  localStorage.setItem('orderData', JSON.stringify(data));
+}
+
+
+    window.onload = function() {
+  const savedData = localStorage.getItem('orderData');
+  if (savedData) {
+    const data = JSON.parse(savedData);
+    total = data.total || 0;
+    order = data.order || {};
+    document.getElementById('total').textContent = total;
+    updateOrderList();
+  }
+};
+
 
   </script>
 </body>
