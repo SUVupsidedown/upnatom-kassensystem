@@ -238,7 +238,7 @@
         if (currentDeliveryFee && currentDeliveryFee.name === itemName) {
           currentDeliveryFee = null;
         }
-        document.getElementById("total").textContent = total;
+        document.getElementById('total').textContent = total;
         updateOrderList();
       }
     }
@@ -247,7 +247,7 @@
       total = 0;
       order = {};
       currentDeliveryFee = null; // Zurücksetzen
-      document.getElementById('total").textContent = total;
+      document.getElementById('total').textContent = total;
       document.getElementById("quantity").value = 1;
       updateOrderList();
     }
