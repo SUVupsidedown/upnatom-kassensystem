@@ -187,7 +187,7 @@
       for (const item in order) {
         const entry = order[item];
         const li = document.createElement('li');
-        li.innerHTML = \\${entry.qty}× \${item} = \${entry.qty * entry.price}$ 
+       li.innerHTML = `${entry.qty}× ${item} = ${entry.qty * entry.price}$`;
           <button onclick="removeItem('\${item}')">❌</button>\`;
         list.appendChild(li);
       }
