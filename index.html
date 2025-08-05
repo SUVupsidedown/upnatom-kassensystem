@@ -189,16 +189,18 @@
     }
 
     function updateOrderList() {
-      const list = document.getElementById('orderList');
-      list.innerHTML = '';
+  const list = document.getElementById('orderList');
+  list.innerHTML = '';
 
-      for (const item in order) {
-        const entry = order[item];
-        const li = document.createElement('li');
-        li.textContent = `${entry.qty}× ${item} (${entry.price}$)`;
-        list.appendChild(li);
-      }
-    }
+  for (const item in order) {
+    const entry = order[item];
+    const lineTotal = entry.qty * entry.price;
+    const li = document.createElement('li');
+    li.textContent = `${entry.qty}× ${item} = ${lineTotal}$`;
+    list.appendChild(li);
+  }
+}
+
 
     function resetTotal() {
       total = 0;
