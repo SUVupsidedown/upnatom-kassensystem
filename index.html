@@ -232,10 +232,13 @@
 
     function removeItem(itemName) {
       if (order[itemName]) {
-        const entry = order[itemName];
-        total -= entry.qty * entry.price;
+        total -= order[itemName].price * order[itemName].qty;
         delete order[itemName];
-        document.getElementById('total').textContent = total;
+        // Falls es die aktive Lieferpauschale war: Zurücksetzen
+        if (currentDeliveryFee && currentDeliveryFee.name === itemName) {
+          currentDeliveryFee = null;
+        }
+        document.getElementById("total").textContent = total;
         updateOrderList();
       }
     }
@@ -243,18 +246,18 @@
     function resetTotal() {
       total = 0;
       order = {};
-      document.getElementById('total').textContent = total;
-      document.getElementById('quantity').value = 1;
+      currentDeliveryFee = null; // Zurücksetzen
+      document.getElementById('total").textContent = total;
+      document.getElementById("quantity").value = 1;
       updateOrderList();
     }
-
+    
     function addDeliveryFee(amount, name) {
       // Falls bereits eine Lieferpauschale ausgewählt ist: Vorher entfernen
       if (currentDeliveryFee) {
         total -= currentDeliveryFee.price;
         delete order[currentDeliveryFee.name];
       }
-
       // Neue Lieferpauschale hinzufügen
       currentDeliveryFee = { name, price: amount };
       total += amount;
