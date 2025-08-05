@@ -115,6 +115,12 @@
       padding-bottom: 0.3rem;
     }
 
+    .order-list button {
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.9rem;
+}
+
     .center {
       text-align: center;
     }
@@ -188,7 +194,7 @@
       updateOrderList();
     }
 
- function updateOrderList() {
+function updateOrderList() {
   const list = document.getElementById('orderList');
   list.innerHTML = '';
 
@@ -197,20 +203,25 @@
     const lineTotal = entry.qty * entry.price;
 
     const li = document.createElement('li');
-    li.innerHTML = `${entry.qty}× ${item} = ${lineTotal}$ 
-      <button class="danger" onclick="removeItem('${item}')">✖</button>`;
+    li.innerHTML = `
+      ${entry.qty}× ${item} = ${lineTotal}$ 
+      <button class="danger" onclick="removeItem('${item}')">✖</button>
+    `;
     list.appendChild(li);
   }
 }
 
-    function removeItem(item) {
-  if (order[item]) {
-    total -= order[item].qty * order[item].price;
-    delete order[item];
+
+function removeItem(itemName) {
+  if (order[itemName]) {
+    const entry = order[itemName];
+    total -= entry.qty * entry.price;
+    delete order[itemName];
     document.getElementById('total').textContent = total;
     updateOrderList();
   }
 }
+
 
 
 
