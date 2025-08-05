@@ -222,7 +222,7 @@ function updateOrderList() {
     const li = document.createElement('li');
     li.innerHTML = `
       ${entry.qty}× ${item} = ${lineTotal}$ 
-      <button class="danger" onclick="removeItem('${item}')">✖</button>
+      <button class="remove-btn" onclick="removeItem('${item}')">✖</button>
     `;
     list.appendChild(li);
   }
