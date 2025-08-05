@@ -116,10 +116,10 @@
     }
 
     .order-list button {
-      margin-left: 0.5rem;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.9rem;
-    }
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.9rem;
+}
 
     .center {
       text-align: center;
@@ -130,23 +130,6 @@
       font-size: 0.9rem;
       opacity: 0.7;
       text-align: center;
-    }
-
-    .remove-btn {
-      background-color: transparent;
-      border: none;
-      color: var(--danger);
-      font-weight: bold;
-      margin-left: 0.5rem;
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 50%;
-      transition: background-color 0.2s ease;
-    }
-
-    .remove-btn:hover {
-      background-color: rgba(255, 59, 48, 0.2);
     }
   </style>
 </head>
@@ -191,7 +174,6 @@
     <div class="summary">
       <h2>🧾 Bestellung</h2>
       <ul id="orderList" class="order-list"></ul>
-      <div id="stats" class="footer" style="margin-top: 2rem;"></div>
     </div>
   </div>
 
@@ -199,44 +181,35 @@
     let total = 0;
     let order = {};
 
-   function addToTotal(amount, name) {
-  const quantity = parseInt(document.getElementById('quantity').value) || 1;
-  total += amount * quantity;
-  document.getElementById('total').textContent = total;
+    function addToTotal(amount, name) {
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+      total += amount * quantity;
+      document.getElementById('total').textContent = total;
 
-  if (!order[name]) {
-    order[name] = { qty: 0, price: amount };
-  }
-  order[name].qty += quantity;
+      if (!order[name]) {
+        order[name] = { qty: 0, price: amount };
+      }
+      order[name].qty += quantity;
 
-  saveToStorage();
-  updateOrderList();
-}
-
+      updateOrderList();
+    }
 
 function updateOrderList() {
   const list = document.getElementById('orderList');
   list.innerHTML = '';
 
-  let totalItems = 0;
-
   for (const item in order) {
     const entry = order[item];
     const lineTotal = entry.qty * entry.price;
-    totalItems += entry.qty;
 
     const li = document.createElement('li');
     li.innerHTML = `
       ${entry.qty}× ${item} = ${lineTotal}$ 
-      <button class="remove-btn" onclick="removeItem('${item}')" title="Entfernen">✖</button>
+      <button class="danger" onclick="removeItem('${item}')">✖</button>
     `;
     list.appendChild(li);
   }
-
-  updateStats(totalItems);
 }
-
-
 
 
 function removeItem(itemName) {
@@ -253,52 +226,12 @@ function removeItem(itemName) {
 
 
     function resetTotal() {
-  total = 0;
-  order = {};
-  document.getElementById('total').textContent = total;
-  document.getElementById('quantity').value = 1;
-  localStorage.removeItem('orderData');
-  updateOrderList();
-}
-
-    function updateStats(totalItems) {
-  const statsBox = document.getElementById('stats');
-  if (totalItems === 0) {
-    statsBox.innerHTML = '';
-    return;
-  }
-
-  const avgPrice = (total / totalItems).toFixed(2);
-
-  statsBox.innerHTML = `
-    <strong>📊 Statistik:</strong><br>
-    Gesamtanzahl Artikel: ${totalItems}<br>
-    Verschiedene Produkte: ${Object.keys(order).length}<br>
-    Durchschnittlicher Preis pro Artikel: ${avgPrice}$
-  `;
-}
-
-    function saveToStorage() {
-  const data = {
-    total: total,
-    order: order
-  };
-  localStorage.setItem('orderData', JSON.stringify(data));
-}
-
-
-    window.onload = function() {
-  const savedData = localStorage.getItem('orderData');
-  if (savedData) {
-    const data = JSON.parse(savedData);
-    total = data.total || 0;
-    order = data.order || {};
-    document.getElementById('total').textContent = total;
-    updateOrderList();
-  }
-};
-
-
+      total = 0;
+      order = {};
+      document.getElementById('total').textContent = total;
+      document.getElementById('quantity').value = 1;
+      updateOrderList();
+    }
   </script>
 </body>
 </html>
