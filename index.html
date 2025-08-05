@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Up-N-Atom Kasse</title>
@@ -21,19 +20,33 @@
       color: var(--text);
     }
 
-    .container {
-      max-width: 600px;
-      margin: 3rem auto;
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .container, .summary {
       background-color: var(--card-bg);
       border-radius: 1.5rem;
       padding: 2rem;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
     }
 
-    h1 {
+    .container {
+      max-width: 600px;
+      flex: 1;
+    }
+
+    .summary {
+      max-width: 300px;
+      flex: 1;
+    }
+
+    h1, h2 {
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
     }
 
     .section-title {
@@ -51,22 +64,13 @@
       font-weight: 500;
     }
 
-    input[type="number"],
-    textarea {
+    input[type="number"] {
       padding: 0.75rem 1rem;
       font-size: 1rem;
       border: none;
       border-radius: 1rem;
-    }
-
-    input[type="number"] {
       width: 80px;
       margin-left: 0.5rem;
-    }
-
-    textarea {
-      width: 100%;
-      resize: vertical;
     }
 
     button {
@@ -100,76 +104,108 @@
       margin-top: 2rem;
     }
 
+    .order-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .order-list li {
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 0.3rem;
+    }
+
     .center {
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.7;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Up-N-Atom Kasse</h1>
+  <div class="layout">
+    <!-- Linker Bereich: Kasse -->
+    <div class="container">
+      <h1>Up-N-Atom Kasse</h1>
 
-    <div class="controls">
-      <label for="quantity">Menge:</label>
-      <input type="number" id="quantity" value="1" min="1" max="99">
+      <div class="controls">
+        <label for="quantity">Menge:</label>
+        <input type="number" id="quantity" value="1" min="1" max="99">
+      </div>
+
+      <div class="section-title">Produkte</div>
+      <button onclick="addToTotal(1200, 'Burger')">🍔 Burger (1200$)</button>
+      <button onclick="addToTotal(1000, 'Beilagen')">🍟 Beilagen (1000$)</button>
+      <button onclick="addToTotal(1050, 'Getränk')">🥤 Getränk (1050$)</button>
+      <button onclick="addToTotal(1100, 'Dessert')">🍩 Dessert (1100$)</button>
+
+      <div class="section-title">Lieferpauschalen</div>
+      <button onclick="addToTotal(500, 'Roxwood & Paleto Bay')">📦 Roxwood & Paleto Bay (500$)</button>
+      <button onclick="addToTotal(1000, 'Grapeseed')">📦 Grapeseed (1000$)</button>
+      <button onclick="addToTotal(1500, 'Sandy Shores & Harmony')">📦 Sandy Shores & Harmony (1500$)</button>
+      <button onclick="addToTotal(2500, 'Los Santos')">📦 Los Santos (2500$)</button>
+
+      <div class="total">
+        Gesamt: <span id="total">0</span>$
+      </div>
+
+      <div class="center">
+        <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
+      </div>
+
+      <div class="footer">
+        &copy; 2025 Up-n-Atom. Alle Rechte vorbehalten. Von Stark Development  
+        <br><a href="https://discord.gg/pNZYwsNNfR" target="_blank" style="color:lightblue;">Discord</a>
+      </div>
     </div>
 
-    <div class="section-title">Produkte</div>
-    <button onclick="addToTotal(1200)">🍔 Burger (1200$)</button>
-    <button onclick="addToTotal(1000)">🍟 Beilagen (1000$)</button>
-    <button onclick="addToTotal(1050)">🥤 Getränk (1050$)</button>
-    <button onclick="addToTotal(1100)">🍩 Dessert (1100$)</button>
-
-    <div class="section-title">Lieferpauschalen</div>
-    <button onclick="addToTotal(500)">📦 Roxwood & Paleto Bay (500$)</button>
-    <button onclick="addToTotal(1000)">📦 Grapeseed (1000$)</button>
-    <button onclick="addToTotal(1500)">📦 Sandy Shores & Harmony (1500$)</button>
-    <button onclick="addToTotal(2500)">📦 Los Santos (2500$)</button>
-
-    <div class="total">
-      Gesamt: <span id="total">0</span>$
+    <!-- Rechter Bereich: Bestellübersicht -->
+    <div class="summary">
+      <h2>🧾 Bestellung</h2>
+      <ul id="orderList" class="order-list"></ul>
     </div>
-
-    <div class="center">
-      <button class="danger" onclick="resetTotal()">Zurücksetzen</button>
-    </div>
-
-    
-    <div class="center" style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.7;">
-      &copy; 2025 Up-n-Atom. Alle Rechte vorbehalten. Von Stark Development https://discord.gg/pNZYwsNNfR
   </div>
 
   <script>
     let total = 0;
-    function addToTotal(amount) {
+    let order = {};
+
+    function addToTotal(amount, name) {
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
       total += amount * quantity;
       document.getElementById('total').textContent = total;
+
+      if (!order[name]) {
+        order[name] = { qty: 0, price: amount };
+      }
+      order[name].qty += quantity;
+
+      updateOrderList();
+    }
+
+    function updateOrderList() {
+      const list = document.getElementById('orderList');
+      list.innerHTML = '';
+
+      for (const item in order) {
+        const entry = order[item];
+        const li = document.createElement('li');
+        li.textContent = `${entry.qty}× ${item} (${entry.price}$)`;
+        list.appendChild(li);
+      }
     }
 
     function resetTotal() {
       total = 0;
+      order = {};
       document.getElementById('total').textContent = total;
       document.getElementById('quantity').value = 1;
-    }
-
-    window.onload = loadNotes;
-
-    function saveNotes() {
-      const content = document.getElementById('notes').value;
-      fetch('/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
-      });
-    }
-
-    function loadNotes() {
-      fetch('/notes')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('notes').value = data.content;
-        });
+      updateOrderList();
     }
   </script>
 </body>
