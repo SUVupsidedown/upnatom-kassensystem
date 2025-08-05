@@ -169,10 +169,10 @@
       <button onclick="addToTotal(1100, 'Dessert')">🍩 Dessert (1100$)</button>
 
       <div class="section-title">Lieferpauschalen</div>
-      <button onclick="addToTotal(500, 'Roxwood & Paleto Bay')">📦 Roxwood & Paleto Bay (500$)</button>
-      <button onclick="addToTotal(1000, 'Grapeseed')">📦 Grapeseed (1000$)</button>
-      <button onclick="addToTotal(1500, 'Sandy Shores & Harmony')">📦 Sandy Shores & Harmony (1500$)</button>
-      <button onclick="addToTotal(2500, 'Los Santos')">📦 Los Santos (2500$)</button>
+      <button onclick="addDeliveryFee(500, 'Roxwood & Paleto Bay')">📦 Roxwood & Paleto Bay (500$)</button>
+      <button onclick="addDeliveryFee(1000, 'Grapeseed')">📦 Grapeseed (1000$)</button>
+      <button onclick="addDeliveryFee(1500, 'Sandy Shores & Harmony')">📦 Sandy Shores & Harmony (1500$)</button>
+      <button onclick="addDeliveryFee(2500, 'Los Santos')">📦 Los Santos (2500$)</button>
 
       <div class="total">
         Gesamt: <span id="total">0</span>$
@@ -198,6 +198,7 @@
   <script>
     let total = 0;
     let order = {};
+    let currentDeliveryFee = null; // Speichert die aktive Lieferpauschale
 
     function addToTotal(amount, name) {
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
@@ -212,42 +213,54 @@
       updateOrderList();
     }
 
-function updateOrderList() {
-  const list = document.getElementById('orderList');
-  list.innerHTML = '';
+    function updateOrderList() {
+      const list = document.getElementById('orderList');
+      list.innerHTML = '';
 
-  for (const item in order) {
-    const entry = order[item];
-    const lineTotal = entry.qty * entry.price;
+      for (const item in order) {
+        const entry = order[item];
+        const lineTotal = entry.qty * entry.price;
 
-    const li = document.createElement('li');
-    li.innerHTML = `
-      ${entry.qty}× ${item} = ${lineTotal}$ 
-      <button class="remove-btn" onclick="removeItem('${item}')">✖</button>
-    `;
-    list.appendChild(li);
-  }
-}
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${entry.qty}× ${item} = ${lineTotal}$ 
+          <button class="remove-btn" onclick="removeItem('${item}')">✖</button>
+        `;
+        list.appendChild(li);
+      }
+    }  
 
-
-function removeItem(itemName) {
-  if (order[itemName]) {
-    const entry = order[itemName];
-    total -= entry.qty * entry.price;
-    delete order[itemName];
-    document.getElementById('total').textContent = total;
-    updateOrderList();
-  }
-}
-
-
-
+    function removeItem(itemName) {
+      if (order[itemName]) {
+        const entry = order[itemName];
+        total -= entry.qty * entry.price;
+        delete order[itemName];
+        document.getElementById('total').textContent = total;
+        updateOrderList();
+      }
+    }
 
     function resetTotal() {
       total = 0;
       order = {};
       document.getElementById('total').textContent = total;
       document.getElementById('quantity').value = 1;
+      updateOrderList();
+    }
+
+    function addDeliveryFee(amount, name) {
+      // Falls bereits eine Lieferpauschale ausgewählt ist: Vorher entfernen
+      if (currentDeliveryFee) {
+        total -= currentDeliveryFee.price;
+        delete order[currentDeliveryFee.name];
+      }
+
+      // Neue Lieferpauschale hinzufügen
+      currentDeliveryFee = { name, price: amount };
+      total += amount;
+      document.getElementById('total').textContent = total;
+
+      order[name] = { qty: 1, price: amount }; // Immer Menge 1
       updateOrderList();
     }
   </script>
