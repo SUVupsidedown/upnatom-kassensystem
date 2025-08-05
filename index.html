@@ -191,6 +191,7 @@
     <div class="summary">
       <h2>🧾 Bestellung</h2>
       <ul id="orderList" class="order-list"></ul>
+      <div id="stats" class="footer" style="margin-top: 2rem;"></div>
     </div>
   </div>
 
@@ -215,9 +216,12 @@ function updateOrderList() {
   const list = document.getElementById('orderList');
   list.innerHTML = '';
 
+  let totalItems = 0;
+
   for (const item in order) {
     const entry = order[item];
     const lineTotal = entry.qty * entry.price;
+    totalItems += entry.qty;
 
     const li = document.createElement('li');
     li.innerHTML = `
@@ -226,7 +230,10 @@ function updateOrderList() {
     `;
     list.appendChild(li);
   }
+
+  updateStats(totalItems);
 }
+
 
 
 
@@ -250,6 +257,24 @@ function removeItem(itemName) {
       document.getElementById('quantity').value = 1;
       updateOrderList();
     }
+
+    function updateStats(totalItems) {
+  const statsBox = document.getElementById('stats');
+  if (totalItems === 0) {
+    statsBox.innerHTML = '';
+    return;
+  }
+
+  const avgPrice = (total / totalItems).toFixed(2);
+
+  statsBox.innerHTML = `
+    <strong>📊 Statistik:</strong><br>
+    Gesamtanzahl Artikel: ${totalItems}<br>
+    Verschiedene Produkte: ${Object.keys(order).length}<br>
+    Durchschnittlicher Preis pro Artikel: ${avgPrice}$
+  `;
+}
+
   </script>
 </body>
 </html>
