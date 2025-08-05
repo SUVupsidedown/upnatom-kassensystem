@@ -197,75 +197,78 @@
 
   <script>
     let total = 0;
-    let order = {};
-    let currentDeliveryFee = null; // Speichert die aktive Lieferpauschale
+let order = {};
+let currentDeliveryFee = null;
 
-    function addToTotal(amount, name) {
-      const quantity = parseInt(document.getElementById('quantity').value) || 1;
-      total += amount * quantity;
-      document.getElementById('total').textContent = total;
+function addToTotal(amount, name) {
+  const quantity = parseInt(document.getElementById('quantity').value) || 1;
+  total += amount * quantity;
+  document.getElementById('total').textContent = total;
 
-      if (!order[name]) {
-        order[name] = { qty: 0, price: amount };
-      }
-      order[name].qty += quantity;
+  if (!order[name]) {
+    order[name] = { qty: 0, price: amount };
+  }
+  order[name].qty += quantity;
 
-      updateOrderList();
-    }
+  updateOrderList();
+}
 
-    function updateOrderList() {
-      const list = document.getElementById('orderList');
-      list.innerHTML = '';
+function addDeliveryFee(amount, name) {
+  // Alte Lieferpauschale entfernen
+  if (currentDeliveryFee) {
+    total -= currentDeliveryFee.price;
+    delete order[currentDeliveryFee.name];
+  }
 
-      for (const item in order) {
-        const entry = order[item];
-        const lineTotal = entry.qty * entry.price;
+  // Neue Lieferpauschale hinzufügen
+  total += amount;
+  currentDeliveryFee = { name, price: amount };
+  order[name] = { qty: 1, price: amount };
+  
+  document.getElementById('total').textContent = total;
+  updateOrderList();
+}
 
-        const li = document.createElement('li');
-        li.innerHTML = `
-          ${entry.qty}× ${item} = ${lineTotal}$ 
-          <button class="remove-btn" onclick="removeItem('${item}')">✖</button>
-        `;
-        list.appendChild(li);
-      }
-    }  
+function updateOrderList() {
+  const list = document.getElementById('orderList');
+  list.innerHTML = '';
 
-    function removeItem(itemName) {
-      if (order[itemName]) {
-        total -= order[itemName].price * order[itemName].qty;
-        delete order[itemName];
-        // Falls es die aktive Lieferpauschale war: Zurücksetzen
-        if (currentDeliveryFee && currentDeliveryFee.name === itemName) {
-          currentDeliveryFee = null;
-        }
-        document.getElementById('total').textContent = total;
-        updateOrderList();
-      }
-    }
+  for (const item in order) {
+    const entry = order[item];
+    const lineTotal = entry.qty * entry.price;
 
-    function resetTotal() {
-      total = 0;
-      order = {};
-      currentDeliveryFee = null; // Zurücksetzen
-      document.getElementById('total').textContent = total;
-      document.getElementById("quantity").value = 1;
-      updateOrderList();
+    const li = document.createElement('li');
+    li.innerHTML = `
+      ${entry.qty}× ${item} = ${lineTotal}$ 
+      <button class="remove-btn" onclick="removeItem('${item}')">✖</button>
+    `;
+    list.appendChild(li);
+  }
+}
+
+function removeItem(itemName) {
+  if (order[itemName]) {
+    total -= order[itemName].price * order[itemName].qty;
+    
+    // Falls es die aktive Lieferpauschale war
+    if (currentDeliveryFee && currentDeliveryFee.name === itemName) {
+      currentDeliveryFee = null;
     }
     
-    function addDeliveryFee(amount, name) {
-      // Falls bereits eine Lieferpauschale ausgewählt ist: Vorher entfernen
-      if (currentDeliveryFee) {
-        total -= currentDeliveryFee.price;
-        delete order[currentDeliveryFee.name];
-      }
-      // Neue Lieferpauschale hinzufügen
-      currentDeliveryFee = { name, price: amount };
-      total += amount;
-      document.getElementById('total').textContent = total;
+    delete order[itemName];
+    document.getElementById('total').textContent = total;
+    updateOrderList();
+  }
+}
 
-      order[name] = { qty: 1, price: amount }; // Immer Menge 1
-      updateOrderList();
-    }
+function resetTotal() {
+  total = 0;
+  order = {};
+  currentDeliveryFee = null;
+  document.getElementById('total').textContent = total;
+  document.getElementById('quantity').value = 1;
+  updateOrderList();
+}
   </script>
 </body>
 </html>
