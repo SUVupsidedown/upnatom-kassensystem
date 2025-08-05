@@ -188,18 +188,30 @@
       updateOrderList();
     }
 
-    function updateOrderList() {
+ function updateOrderList() {
   const list = document.getElementById('orderList');
   list.innerHTML = '';
 
   for (const item in order) {
     const entry = order[item];
     const lineTotal = entry.qty * entry.price;
+
     const li = document.createElement('li');
-    li.textContent = `${entry.qty}× ${item} = ${lineTotal}$`;
+    li.innerHTML = `${entry.qty}× ${item} = ${lineTotal}$ 
+      <button class="danger" onclick="removeItem('${item}')">✖</button>`;
     list.appendChild(li);
   }
 }
+
+    function removeItem(item) {
+  if (order[item]) {
+    total -= order[item].qty * order[item].price;
+    delete order[item];
+    document.getElementById('total').textContent = total;
+    updateOrderList();
+  }
+}
+
 
 
     function resetTotal() {
